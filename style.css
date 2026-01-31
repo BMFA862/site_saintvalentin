@@ -16,10 +16,8 @@ body {
 #monBouton {
     position: relative; /* nécessaire pour que z-index soit pris en compte */
     z-index: 9999;
-    width: 34vh;
-    height: auto;
     border: none;
     background: none;
     cursor: pointer;
-
+    padding: 0;
 }
