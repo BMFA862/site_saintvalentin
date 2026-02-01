@@ -2,6 +2,12 @@
 // PARAMÈTRES CONFIGURABLES
 // ===============================
 
+// Score et victoire
+let score = 0;
+const MAX_SCORE = 50;
+let victoryShown = false;
+const VICTORY_IMAGE = "img/vidéo-saint-valentin-1.gif"; // À remplacer par votre image de victoire
+
 // Fourchette de taille (en pixels)
 const MIN_SIZE = 50;
 const MAX_SIZE = 200;
@@ -33,6 +39,45 @@ function pickImage() {
     return Array.isArray(images)
         ? images[Math.floor(Math.random() * images.length)]
         : images;
+}
+
+// ===============================
+// FONCTIONS DE GESTION DU SCORE
+// ===============================
+
+function updateScore() {
+    score++;
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    
+    if (score < MAX_SCORE) {
+        scoreDisplay.textContent = `Score : ${score}/${MAX_SCORE}`;
+    } else {
+        scoreDisplay.textContent = `Score : ${score}`;
+        if (!victoryShown) {
+            showVictory();
+            victoryShown = true;
+        }
+    }
+}
+
+function showVictory() {
+    const victoryScreen = document.getElementById("victoryScreen");
+    const victoryImage = document.getElementById("victoryImage");
+    victoryImage.src = VICTORY_IMAGE;
+    victoryScreen.classList.remove("hidden");
+    
+    // Désactiver le bouton
+    const btn = document.getElementById("monBouton");
+    btn.disabled = true;
+}
+
+function closeVictory() {
+    const victoryScreen = document.getElementById("victoryScreen");
+    victoryScreen.classList.add("hidden");
+    
+    // Réactiver le bouton
+    const btn = document.getElementById("monBouton");
+    btn.disabled = false;
 }
 
 // ===============================
@@ -77,6 +122,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // Supporte l'image bouton avec ID monBouton
     const btn = document.getElementById("monBouton");
     if (btn) {
-        btn.addEventListener("click", spawnRandomImage);
+        btn.addEventListener("click", () => {
+            spawnRandomImage();
+            updateScore();
+    
+    // Bouton fermer l'écran de victoire
+    const closeBtn = document.getElementById("closeVictory");
+    if (closeBtn) {
+        closeBtn.addEventListener("click", closeVictory);
+    }
+        });
     }
 });
