@@ -63,8 +63,17 @@ function updateScore() {
 function showVictory() {
     const victoryScreen = document.getElementById("victoryScreen");
     const victoryImage = document.getElementById("victoryImage");
-    victoryImage.src = VICTORY_IMAGE;
+    const victoryLoader = document.getElementById("victoryLoader");
+    
     victoryScreen.classList.remove("hidden");
+    victoryLoader.classList.remove("hidden");
+    
+    // Charger l'image et masquer le loader une fois chargée
+    victoryImage.onload = () => {
+        victoryLoader.classList.add("hidden");
+    };
+    
+    victoryImage.src = VICTORY_IMAGE;
     
     // Désactiver le bouton
     const btn = document.getElementById("monBouton");
@@ -119,18 +128,22 @@ function spawnRandomImage() {
 
 // Exemple : bouton avec id="spawnBtn"
 document.addEventListener("DOMContentLoaded", () => {
+    // Masquer le loader au chargement de la page
+    const loader = document.getElementById("loader");
+    loader.classList.add("hidden");
+    
     // Supporte l'image bouton avec ID monBouton
     const btn = document.getElementById("monBouton");
     if (btn) {
         btn.addEventListener("click", () => {
             spawnRandomImage();
             updateScore();
+        });
+    }
     
     // Bouton fermer l'écran de victoire
     const closeBtn = document.getElementById("closeVictory");
     if (closeBtn) {
         closeBtn.addEventListener("click", closeVictory);
-    }
-        });
     }
 });
