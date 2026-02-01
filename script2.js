@@ -66,6 +66,7 @@ function showVictory() {
     
     victoryScreen.classList.remove("hidden");
     victoryVideo.src = VICTORY_IMAGE;
+    victoryVideo.loop = true;
     victoryVideo.play();
     
     // Désactiver le bouton
