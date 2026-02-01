@@ -6,7 +6,7 @@
 let score = 0;
 const MAX_SCORE = 50;
 let victoryShown = false;
-const VICTORY_IMAGE = "img/vidéo-saint-valentin-1.gif"; // À remplacer par votre image de victoire
+const VICTORY_IMAGE = "img/vidéo saint valentin 1.mp4"; // À remplacer par votre image de victoire
 
 // Fourchette de taille (en pixels)
 const MIN_SIZE = 50;
@@ -62,10 +62,11 @@ function updateScore() {
 
 function showVictory() {
     const victoryScreen = document.getElementById("victoryScreen");
-    const victoryImage = document.getElementById("victoryImage");
+    const victoryVideo = document.getElementById("victoryImage");
     
     victoryScreen.classList.remove("hidden");
-    victoryImage.src = VICTORY_IMAGE;
+    victoryVideo.src = VICTORY_IMAGE;
+    victoryVideo.play();
     
     // Désactiver le bouton
     const btn = document.getElementById("monBouton");
