@@ -63,16 +63,8 @@ function updateScore() {
 function showVictory() {
     const victoryScreen = document.getElementById("victoryScreen");
     const victoryImage = document.getElementById("victoryImage");
-    const victoryLoader = document.getElementById("victoryLoader");
     
     victoryScreen.classList.remove("hidden");
-    victoryLoader.classList.remove("hidden");
-    
-    // Charger l'image et masquer le loader une fois chargée
-    victoryImage.onload = () => {
-        victoryLoader.classList.add("hidden");
-    };
-    
     victoryImage.src = VICTORY_IMAGE;
     
     // Désactiver le bouton
@@ -128,10 +120,6 @@ function spawnRandomImage() {
 
 // Exemple : bouton avec id="spawnBtn"
 document.addEventListener("DOMContentLoaded", () => {
-    // Masquer le loader au chargement de la page
-    const loader = document.getElementById("loader");
-    loader.classList.add("hidden");
-    
     // Supporte l'image bouton avec ID monBouton
     const btn = document.getElementById("monBouton");
     if (btn) {
