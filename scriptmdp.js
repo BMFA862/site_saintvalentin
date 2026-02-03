@@ -33,7 +33,7 @@ async function getMachineIdentifier() {
 
 // Mot de passe hashé (vous pouvez le générer une fois et le stocker)
 // Pour générer: hashPassword("votreMotDePasse").then(h => console.log(h))
-const CORRECT_PASSWORD_HASH = "82c54848684abada2a27edb35393413bb6adae9fb641f07cffd1802e22fb51a9"; // hash de "adob452##"
+const CORRECT_PASSWORD_HASH = "82c54848684abada2a27edb35393413bb6adae9fb641f07cffd1802e22fb51a9"; 
 
 // Durée d'accès en millisecondes (10 minutes)
 const ACCESS_DURATION = 10 * 60 * 1000;
