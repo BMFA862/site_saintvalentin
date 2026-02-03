@@ -110,3 +110,21 @@ body {
 .close-button:active {
     transform: scale(0.9);
 }
+
+/* Pied de page des crédits — toujours en bas */
+#credits {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e9e9e9; /* gris clair */
+    color: #ffffff; /* texte en blanc */
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    z-index: 100000;
+}
+
+#credits p {
+    margin: 0; /* éviter marge par défaut du <p> */
+}
