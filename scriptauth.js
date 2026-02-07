@@ -9,7 +9,8 @@ window.COUNTER_KEY = 'global-visits'; // Changez ce nom (ex: global-visits-v2) p
 // Fonction pour compter les visites sur index.html
 function countVisit() {
     // Utilisation de counterapi.dev (gratuit, sans compte, stable)
-    fetch(`https://api.counterapi.dev/v1/${window.COUNTER_NAMESPACE}/${window.COUNTER_KEY}/up`)
+    // Ajout de { cache: 'no-store' } pour forcer le navigateur à ne pas utiliser le cache
+    fetch(`https://api.counterapi.dev/v1/${window.COUNTER_NAMESPACE}/${window.COUNTER_KEY}/up`, { cache: 'no-store' })
         .then(response => response.json())
         .then(data => console.log("Visite comptabilisée:", data.count))
         .catch(err => console.error("Erreur compteur:", err));
@@ -17,9 +18,10 @@ function countVisit() {
 
 // Vérifier l'authentification au chargement de la page
 function checkAuthentication() {
-    const currentPage = window.location.pathname;
+    // On met tout en minuscule et on décode les caractères spéciaux (ex: %20 pour les espaces)
+    const currentPage = decodeURIComponent(window.location.pathname).toLowerCase();
     
-    const isIndexPage = currentPage.endsWith("index.html") || currentPage === "/" || currentPage.endsWith("/");
+    const isIndexPage = currentPage.indexOf("index.html") !== -1 || currentPage === "/" || currentPage.endsWith("/");
 
     // Seule admin.html est protégée par authentification
     const isProtectedPage = currentPage.endsWith("admin.html");

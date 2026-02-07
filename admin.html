@@ -42,7 +42,7 @@
             // Fonction pour mettre à jour l'affichage du compteur
             function updateVisitCountDisplay() {
                 // Récupérer la valeur depuis l'API externe
-                fetch(`https://api.counterapi.dev/v1/${window.COUNTER_NAMESPACE}/${window.COUNTER_KEY}`)
+                fetch(`https://api.counterapi.dev/v1/${window.COUNTER_NAMESPACE}/${window.COUNTER_KEY}`, { cache: 'no-store' })
                     .then(res => res.json())
                     .then(data => {
                         if (visitElement) visitElement.textContent = data.count;
