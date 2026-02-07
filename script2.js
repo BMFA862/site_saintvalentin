@@ -136,4 +136,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (closeBtn) {
         closeBtn.addEventListener("click", closeVictory);
     }
+
+    // Précharger la vidéo de victoire dès le chargement initial de la page
+    const victoryVideo = document.getElementById("victoryImage");
+    if (victoryVideo) {
+        victoryVideo.src = VICTORY_IMAGE;
+        victoryVideo.preload = "auto";
+        // Appeler load() pour demander explicitement au navigateur de commencer le téléchargement
+        try {
+            victoryVideo.load();
+        } catch (e) {
+            // Sinon, laisser le navigateur gérer le préchargement
+        }
+    }
 });
