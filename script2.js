@@ -150,6 +150,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Précharger les images du jeu pour qu'elles s'affichent instantanément
+    if (Array.isArray(images)) {
+        images.forEach(src => {
+            const img = new Image();
+            img.src = src;
+        });
+    } else if (typeof images === 'string') {
+        // Cas où il n'y aurait qu'une seule image définie en string
+        const img = new Image();
+        img.src = images;
+    }
+
     // Désactiver le double-tap / double-click qui zoome la page sur navigateurs Apple
     (function disableAppleDoubleTapZoom() {
         const ua = navigator.userAgent || "";
