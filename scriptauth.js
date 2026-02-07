@@ -2,11 +2,17 @@
 // PROTECTION D'AUTHENTIFICATION
 // ===============================
 
+// Configuration du compteur global (API externe pour GitHub Pages)
+window.COUNTER_NAMESPACE = 'saint-valentin-benjamin-app'; // Identifiant unique du projet
+window.COUNTER_KEY = 'global-visits'; // Changez ce nom (ex: global-visits-v2) pour réinitialiser le compteur
+
 // Fonction pour compter les visites sur index.html
 function countVisit() {
-    let visitCount = localStorage.getItem("visitCount");
-    visitCount = visitCount ? parseInt(visitCount) + 1 : 1;
-    localStorage.setItem("visitCount", visitCount);
+    // Utilisation de counterapi.dev (gratuit, sans compte, stable)
+    fetch(`https://api.counterapi.dev/v1/${window.COUNTER_NAMESPACE}/${window.COUNTER_KEY}/up`)
+        .then(response => response.json())
+        .then(data => console.log("Visite comptabilisée:", data.count))
+        .catch(err => console.error("Erreur compteur:", err));
 }
 
 // Vérifier l'authentification au chargement de la page

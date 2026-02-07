@@ -41,10 +41,15 @@
 
             // Fonction pour mettre à jour l'affichage du compteur
             function updateVisitCountDisplay() {
-                const visitCount = localStorage.getItem("visitCount") || 0;
-                if (visitElement) {
-                    visitElement.textContent = visitCount;
-                }
+                // Récupérer la valeur depuis l'API externe
+                fetch(`https://api.counterapi.dev/v1/${window.COUNTER_NAMESPACE}/${window.COUNTER_KEY}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (visitElement) visitElement.textContent = data.count;
+                    })
+                    .catch(err => {
+                        if (visitElement) visitElement.textContent = "0";
+                    });
             }
 
             // Mettre à jour l'affichage au chargement de la page
@@ -57,11 +62,9 @@
                     const isConfirmed = confirm("Êtes-vous sûr de vouloir réinitialiser le compteur de visites ?");
 
                     if (isConfirmed) {
-                        // Supprimer la valeur du localStorage
-                        localStorage.removeItem("visitCount");
-                        
-                        // Mettre à jour l'affichage
-                        updateVisitCountDisplay();
+                        // Cette API ne permet pas le reset direct pour des raisons de sécurité.
+                        // On informe l'utilisateur de la méthode manuelle.
+                        alert("Pour réinitialiser le compteur avec cette API sécurisée, veuillez changer la valeur de 'COUNTER_KEY' dans le fichier scriptauth.js (ex: 'global-visits-v2').");
                     }
                 });
             }
