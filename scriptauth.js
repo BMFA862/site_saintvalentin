@@ -1,42 +1,56 @@
 // ===============================
-// GESTION DU STOCKAGE JSON (COMPTEUR)
+// GESTION DU STOCKAGE (JSONBLOB)
 // ===============================
 
-const STORAGE_CONFIG = {
-    namespace: 'saint-valentin-benjamin-app',
-    filename: 'compteur.json' // Simule le nom du fichier JSON
-};
+// 🔴 IMPORTANT : Remplacez l'ID ci-dessous par celui que vous avez créé sur jsonblob.com
+const BLOB_ID = "019c3a27-71d5-7fe4-815c-b3fa0dc8deea"; 
+const API_URL = `https://jsonblob.com/api/jsonBlob/${BLOB_ID}`;
 
-// 1. ÉCRIRE (+1) dans le fichier distant
-function incrementerCompteur() {
-    // Utilisation de countapi.xyz qui permet le reset
-    const url = `https://api.countapi.xyz/hit/${STORAGE_CONFIG.namespace}/${STORAGE_CONFIG.filename}`;
-    fetch(url)
-        .then(response => response.json())
-        .then(data => console.log("Nouveau fichier JSON mis à jour. Total:", data.value))
-        .catch(err => console.error("Erreur écriture fichier:", err));
+// 1. ÉCRIRE (+1)
+async function incrementerCompteur() {
+    try {
+        // A. On récupère le fichier actuel
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        
+        // B. On ajoute 1
+        data.visites = (data.visites || 0) + 1;
+        
+        // C. On sauvegarde le fichier modifié
+        await fetch(API_URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        console.log("Visite comptabilisée. Total:", data.visites);
+    } catch (err) {
+        console.error("Erreur compteur:", err);
+    }
 }
 
-// 2. LIRE le fichier distant
+// 2. LIRE
 async function lireCompteur() {
-    const url = `https://api.countapi.xyz/get/${STORAGE_CONFIG.namespace}/${STORAGE_CONFIG.filename}`;
     try {
-        const response = await fetch(url);
+        const response = await fetch(API_URL);
         const data = await response.json();
-        return data.value || 0;
+        return data.visites || 0;
     } catch (error) {
         console.error("Erreur lecture fichier:", error);
         return 0;
     }
 }
 
-// 3. REMETTRE À ZÉRO (RESET)
+// 3. REMETTRE À ZÉRO
 async function resetCompteur() {
-    const url = `https://api.countapi.xyz/set/${STORAGE_CONFIG.namespace}/${STORAGE_CONFIG.filename}?value=0`;
     try {
-        const response = await fetch(url);
-        const data = await response.json();
-        return data.value;
+        // On écrase le fichier avec 0
+        const newData = { "visites": 0 };
+        await fetch(API_URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newData)
+        });
+        return 0;
     } catch (error) {
         console.error("Erreur reset fichier:", error);
         return null;
