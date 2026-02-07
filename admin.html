@@ -33,38 +33,34 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const visitElement = document.getElementById("visitCount");
             const resetButton = document.getElementById("resetButton");
 
-            // Fonction pour mettre à jour l'affichage du compteur
-            function updateVisitCountDisplay() {
-                // Récupérer la valeur depuis l'API externe
-                fetch(`https://api.counterapi.dev/v1/${window.COUNTER_NAMESPACE}/${window.COUNTER_KEY}`, { cache: 'no-store' })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (visitElement) visitElement.textContent = data.count;
-                    })
-                    .catch(err => {
-                        if (visitElement) visitElement.textContent = "0";
-                    });
+            // 1. Lire le fichier JSON distant et afficher le nombre
+            async function afficherStatistiques() {
+                if (visitElement) {
+                    visitElement.textContent = "Chargement...";
+                    const nombreVisites = await lireCompteur();
+                    visitElement.textContent = nombreVisites;
+                }
             }
 
-            // Mettre à jour l'affichage au chargement de la page
-            updateVisitCountDisplay();
+            // Lancer l'affichage
+            afficherStatistiques();
 
-            // Gérer le clic sur le bouton de réinitialisation
+            // 2. Gestion du bouton Reset
             if (resetButton) {
-                resetButton.addEventListener("click", () => {
-                    // Afficher une popup de confirmation
-                    const isConfirmed = confirm("Êtes-vous sûr de vouloir réinitialiser le compteur de visites ?");
-
-                    if (isConfirmed) {
-                        // Cette API ne permet pas le reset direct pour des raisons de sécurité.
-                        // On informe l'utilisateur de la méthode manuelle.
-                        alert("Pour réinitialiser le compteur avec cette API sécurisée, veuillez changer la valeur de 'COUNTER_KEY' dans le fichier scriptauth.js (ex: 'global-visits-v2').");
+                resetButton.addEventListener("click", async () => {
+                    if (confirm("Êtes-vous sûr de vouloir remettre le compteur à zéro ?")) {
+                        const nouveauScore = await resetCompteur();
+                        if (nouveauScore !== null) {
+                            visitElement.textContent = nouveauScore;
+                            alert("Compteur réinitialisé avec succès !");
+                        } else {
+                            alert("Erreur lors de la réinitialisation.");
+                        }
                     }
                 });
             }
