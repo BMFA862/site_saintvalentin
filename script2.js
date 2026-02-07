@@ -149,4 +149,28 @@ document.addEventListener("DOMContentLoaded", () => {
             // Sinon, laisser le navigateur gérer le préchargement
         }
     }
+
+    // Désactiver le double-tap / double-click qui zoome la page sur navigateurs Apple
+    (function disableAppleDoubleTapZoom() {
+        const ua = navigator.userAgent || "";
+        const isApple = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        if (!isApple) return;
+
+        // S'assurer qu'une meta viewport existe et empêcher le zoom (note: impacte l'accessibilité)
+        const viewportContent = "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no";
+        let meta = document.querySelector('meta[name="viewport"]');
+        if (meta) {
+            meta.setAttribute('content', viewportContent);
+        } else {
+            meta = document.createElement('meta');
+            meta.name = 'viewport';
+            meta.content = viewportContent;
+            document.head.appendChild(meta);
+        }
+
+        // Empêcher le double-clic (desktop Safari) de déclencher l'action par défaut
+        window.addEventListener('dblclick', function (e) {
+            e.preventDefault();
+        }, { passive: false });
+    })();
 });

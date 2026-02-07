@@ -11,18 +11,24 @@ async function hashPassword(password) {
 // Récupérer l'adresse MAC (ou l'IP locale comme proxy)
 async function getMachineIdentifier() {
     return new Promise((resolve) => {
-        const pc = new RTCPeerConnection({ iceServers: [] });
-        const ipv4Pattern = /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
-        
-        pc.createDataChannel('');
-        pc.createOffer().then(offer => pc.setLocalDescription(offer));
-        
-        pc.onicecandidate = (ice) => {
-            if (!ice || !ice.candidate) return;
-            const ipAddress = ipv4Pattern.exec(ice.candidate.candidate)[0];
-            pc.close();
-            resolve(ipAddress);
-        };
+        try {
+            const pc = new RTCPeerConnection({ iceServers: [] });
+            const ipv4Pattern = /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
+            
+            pc.createDataChannel('');
+            pc.createOffer().then(offer => pc.setLocalDescription(offer));
+            
+            pc.onicecandidate = (ice) => {
+                if (!ice || !ice.candidate) return;
+                const match = ipv4Pattern.exec(ice.candidate.candidate);
+                if (match) {
+                    pc.close();
+                    resolve(match[0]);
+                }
+            };
+        } catch (e) {
+            resolve('unknown-device-error');
+        }
         
         // Fallback si on ne peut pas récupérer l'IP
         setTimeout(() => {
