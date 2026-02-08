@@ -190,9 +190,20 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const videoPromise = new Promise((resolve) => {
             let resolved = false;
-            const done = () => { if (!resolved) { resolved = true; resolve(); } };
+            let checkProgress; // Déclaration préalable pour l'utiliser dans done()
 
-            const checkProgress = () => {
+            const done = () => { 
+                if (!resolved) { 
+                    resolved = true; 
+                    // Nettoyage : on arrête d'écouter les événements une fois fini
+                    victoryVideo.removeEventListener('progress', checkProgress);
+                    victoryVideo.removeEventListener('loadedmetadata', checkProgress);
+                    victoryVideo.removeEventListener('error', done);
+                    resolve(); 
+                } 
+            };
+
+            checkProgress = () => {
                 if (resolved) return;
                 
                 // Si la durée n'est pas encore connue, on attend
