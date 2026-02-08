@@ -42,23 +42,33 @@ function pickImage() {
 }
 
 // ===============================
-// GESTION DU COMPTEUR (CountAPI)
+// GESTION DU COMPTEUR (npoint.io)
 // ===============================
 async function incrementerCompteur() {
-    // Sécurité : on récupère l'URL globale définie dans scriptauth.js (CountAPI)
-    const url = window.COUNT_API_HIT;
+    // Sécurité : on récupère l'URL globale définie dans scriptauth.js
+    const url = window.NPOINT_API_URL;
     
     if (!url) {
-        console.error("❌ ERREUR : COUNT_API_HIT n'est pas définie. Le fichier scriptauth.js est-il bien chargé ?");
+        console.error("❌ ERREUR : ID npoint.io non configuré. Allez sur npoint.io, créez un JSON { \"visites\": 0 } et mettez l'ID dans scriptauth.js");
         return;
     }
 
     try {
-        // CountAPI incrémente automatiquement lors de l'appel (HIT)
+        // 1. Lire la valeur actuelle
         const response = await fetch(url);
-        const data = await response.json();
+        let data = await response.json();
         
-        console.log(`✅ Visite comptabilisée ! Nouveau total : ${data.value}`);
+        // 2. Incrémenter
+        data.visites = (data.visites || 0) + 1;
+        
+        // 3. Sauvegarder (POST met à jour tout le JSON)
+        await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        console.log(`✅ Visite comptabilisée ! Nouveau total : ${data.visites}`);
     } catch (err) {
         console.error("❌ Erreur réseau compteur:", err);
     }
