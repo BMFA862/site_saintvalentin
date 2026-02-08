@@ -5,11 +5,14 @@
 // 🔴 IMPORTANT : Remplacez l'ID ci-dessous par celui que vous avez créé sur jsonblob.com
 const BLOB_ID = "019c3e52-a59b-7ae1-902b-660da6f29842"; 
 const API_URL = `https://jsonblob.com/api/jsonBlob/${BLOB_ID}`;
+// Rendre l'URL accessible globalement pour script2.js
+window.API_URL = API_URL;
 
 // 2. LIRE
 async function lireCompteur() {
     try {
-        const response = await fetch(API_URL);
+        // cache: 'no-store' force le navigateur à récupérer la vraie valeur
+        const response = await fetch(API_URL, { cache: "no-store" });
         const data = await response.json();
         return data.visites || 0;
     } catch (error) {

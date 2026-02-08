@@ -46,14 +46,16 @@ function pickImage() {
 // ===============================
 async function incrementerCompteur() {
     // Utilise API_URL défini dans scriptauth.js
-    if (typeof API_URL === 'undefined') return;
+    const url = window.API_URL || (typeof API_URL !== 'undefined' ? API_URL : null);
+    if (!url) return;
 
     try {
-        const response = await fetch(API_URL);
+        // IMPORTANT : cache: 'no-store' empêche le téléphone de réutiliser une vieille valeur
+        const response = await fetch(url, { cache: "no-store" });
         const data = await response.json();
         data.visites = (data.visites || 0) + 1;
         
-        await fetch(API_URL, {
+        await fetch(url, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
