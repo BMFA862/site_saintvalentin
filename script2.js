@@ -42,33 +42,36 @@ function pickImage() {
 }
 
 // ===============================
-// GESTION DU COMPTEUR (npoint.io)
+// GESTION DU COMPTEUR (JSONBIN.IO)
 // ===============================
 async function incrementerCompteur() {
     // Sécurité : on récupère l'URL globale définie dans scriptauth.js
-    const url = window.NPOINT_API_URL;
+    const url = window.JSONBIN_API_URL;
+    const key = window.JSONBIN_API_KEY;
     
     if (!url) {
-        console.error("❌ ERREUR : ID npoint.io non configuré. Allez sur npoint.io, créez un JSON { \"visites\": 0 } et mettez l'ID dans scriptauth.js");
+        console.error("❌ ERREUR : JSONBIN non configuré. Remplissez BIN_ID et API_KEY dans scriptauth.js");
         return;
     }
 
     try {
         // 1. Lire la valeur actuelle
-        const response = await fetch(url);
+        const response = await fetch(url, { headers: { 'X-Master-Key': key } });
         let data = await response.json();
         
+        let currentVisits = data.record.visites || 0;
+
         // 2. Incrémenter
-        data.visites = (data.visites || 0) + 1;
+        let newVisits = currentVisits + 1;
         
-        // 3. Sauvegarder (POST met à jour tout le JSON)
+        // 3. Sauvegarder (PUT met à jour tout le JSON)
         await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-Master-Key': key },
+            body: JSON.stringify({ "visites": newVisits })
         });
         
-        console.log(`✅ Visite comptabilisée ! Nouveau total : ${data.visites}`);
+        console.log(`✅ Visite comptabilisée ! Nouveau total : ${newVisits}`);
     } catch (err) {
         console.error("❌ Erreur réseau compteur:", err);
     }

@@ -1,19 +1,26 @@
 // ===============================
-// GESTION DU STOCKAGE (npoint.io)
+// GESTION DU STOCKAGE (JSONBIN.IO)
 // ===============================
 
-// 🔴 IMPORTANT : Remplacez l'ID ci-dessous par celui que vous avez créé sur npoint.io
-const BIN_ID = "48fbbe443444c9b9a76b"; 
-const API_URL = `https://api.npoint.io/${BIN_ID}`;
-// Rendre l'URL accessible globalement
-window.NPOINT_API_URL = API_URL;
+// 🔴 IMPORTANT : Créez un compte sur jsonbin.io, créez un bin avec { "visites": 0 }
+// Copiez le BIN ID et la X-Master-Key (API Key) ici.
+const BIN_ID = "6988e136ae596e708f1b0340"; // Nécessaire pour identifier votre bin
+const API_KEY = "$2a$10$IOC9DDROugeavpEpMgCoteJ9Z/LI0UGMBx0.4TS8ZRMM4VkKXiOTS"; // Nécessaire pour lire/modifier les données privées
+
+const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
+// Rendre accessibles globalement
+window.JSONBIN_API_URL = API_URL;
+window.JSONBIN_API_KEY = API_KEY;
 
 // 2. LIRE
 async function lireCompteur() {
     try {
-        const response = await fetch(API_URL);
+        const response = await fetch(API_URL, { headers: { 'X-Master-Key': API_KEY } });
+        if (!response.ok) throw new Error("Erreur HTTP");
         const data = await response.json();
-        return data.visites || 0;
+        // JSONBin v3 retourne les données dans l'objet "record"
+        return data.record.visites || 0;
     } catch (error) {
         console.error("Erreur lecture compteur:", error);
         return "error";
@@ -25,8 +32,8 @@ async function resetCompteur() {
     try {
         const newData = { "visites": 0 };
         await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
             body: JSON.stringify(newData)
         });
         return 0;
