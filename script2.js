@@ -137,30 +137,52 @@ document.addEventListener("DOMContentLoaded", () => {
         closeBtn.addEventListener("click", closeVictory);
     }
 
-    // Précharger la vidéo de victoire dès le chargement initial de la page
+    // ===============================
+    // GESTION DU CHARGEMENT (LOADER)
+    // ===============================
+    const loadingScreen = document.getElementById("loadingScreen");
+    const preloadPromises = [];
+
+    // 1. Précharger la vidéo de victoire
     const victoryVideo = document.getElementById("victoryImage");
     if (victoryVideo) {
         victoryVideo.src = VICTORY_IMAGE;
         victoryVideo.preload = "auto";
-        // Appeler load() pour demander explicitement au navigateur de commencer le téléchargement
-        try {
-            victoryVideo.load();
-        } catch (e) {
-            // Sinon, laisser le navigateur gérer le préchargement
-        }
+        
+        const videoPromise = new Promise((resolve) => {
+            // On considère chargé si on peut commencer à lire, ou en cas d'erreur/timeout
+            let resolved = false;
+            const done = () => { if (!resolved) { resolved = true; resolve(); } };
+
+            victoryVideo.addEventListener('canplay', done, { once: true });
+            victoryVideo.addEventListener('error', done, { once: true });
+            // Timeout de sécurité (4s) pour ne pas bloquer le jeu si la connexion est lente
+            setTimeout(done, 4000);
+        });
+        preloadPromises.push(videoPromise);
+
+        try { victoryVideo.load(); } catch (e) {}
     }
 
-    // Précharger les images du jeu pour qu'elles s'affichent instantanément
-    if (Array.isArray(images)) {
-        images.forEach(src => {
+    // 2. Précharger les images du jeu
+    const imageList = Array.isArray(images) ? images : [images];
+    imageList.forEach(src => {
+        const p = new Promise((resolve) => {
             const img = new Image();
+            img.onload = resolve;
+            img.onerror = resolve;
             img.src = src;
         });
-    } else if (typeof images === 'string') {
-        // Cas où il n'y aurait qu'une seule image définie en string
-        const img = new Image();
-        img.src = images;
-    }
+        preloadPromises.push(p);
+    });
+
+    // 3. Masquer l'écran de chargement une fois tout prêt
+    Promise.all(preloadPromises).then(() => {
+        // Petit délai pour la fluidité visuelle
+        setTimeout(() => {
+            if (loadingScreen) loadingScreen.classList.add("hidden");
+        }, 500);
+    });
 
     // Désactiver le double-tap / double-click qui zoome la page sur navigateurs Apple
     (function disableAppleDoubleTapZoom() {
