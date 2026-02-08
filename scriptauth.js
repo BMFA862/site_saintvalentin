@@ -4,7 +4,7 @@
 
 // 🔴 IMPORTANT : Remplacez l'ID ci-dessous par celui que vous avez créé sur jsonblob.com
 const BLOB_ID = "019c3e52-a59b-7ae1-902b-660da6f29842"; 
-const API_URL = `https://jsonblob.com/api/jsonBlob/${BLOB_ID}`;
+const API_URL = `https://jsonblob.com/${BLOB_ID}`;
 // Rendre l'URL accessible globalement pour script2.js
 window.API_URL = API_URL;
 
