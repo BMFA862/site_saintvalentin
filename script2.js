@@ -45,24 +45,38 @@ function pickImage() {
 // GESTION DU COMPTEUR (JSONBLOB)
 // ===============================
 async function incrementerCompteur() {
-    // Utilise API_URL défini dans scriptauth.js
-    const url = window.API_URL || (typeof API_URL !== 'undefined' ? API_URL : null);
-    if (!url) return;
+    // Sécurité : on récupère l'URL globale définie dans scriptauth.js
+    const url = window.API_URL;
+    
+    if (!url) {
+        console.error("❌ ERREUR : API_URL n'est pas définie. Le fichier scriptauth.js est-il bien chargé ?");
+        return;
+    }
 
     try {
-        // IMPORTANT : cache: 'no-store' empêche le téléphone de réutiliser une vieille valeur
-        const response = await fetch(url, { cache: "no-store" });
-        const data = await response.json();
+        // 1. On récupère la valeur actuelle (sans cache)
+        const response = await fetch(url, { 
+            method: 'GET',
+            cache: "no-store"
+            // On retire les headers pour éviter une requête "OPTIONS" (preflight) qui cause souvent l'erreur CORS
+        });
+
+        // Si le fichier n'existe pas (404) ou erreur, on part de zéro
+        let data = response.ok ? await response.json() : { visites: 0 };
+
+        // 2. On incrémente
         data.visites = (data.visites || 0) + 1;
         
+        // 3. On sauvegarde (keepalive permet de finir la requête même si on quitte la page)
         await fetch(url, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
+            // On retire keepalive temporairement pour améliorer la compatibilité locale
         });
-        console.log("Visite comptabilisée. Total:", data.visites);
+        console.log(`✅ Visite comptabilisée ! Nouveau total : ${data.visites}`);
     } catch (err) {
-        console.error("Erreur compteur:", err);
+        console.error("❌ Erreur réseau compteur:", err);
     }
 }
 
