@@ -44,8 +44,6 @@ function pickImage() {
 // ===============================
 // GESTION DU COMPTEUR (JSONBLOB)
 // ===============================
-const BLOB_ID = "019c3e52-a59b-7ae1-902b-660da6f29842"; 
-const API_URL = `https://jsonblob.com/api/jsonBlob/${BLOB_ID}`;
 async function incrementerCompteur() {
     // Utilise API_URL défini dans scriptauth.js
     if (typeof API_URL === 'undefined') return;
@@ -182,10 +180,14 @@ document.addEventListener("DOMContentLoaded", () => {
             let resolved = false;
             const done = () => { if (!resolved) { resolved = true; resolve(); } };
 
-            victoryVideo.addEventListener('canplay', done, { once: true });
-            victoryVideo.addEventListener('error', done, { once: true });
-            // Timeout de sécurité (4s) pour ne pas bloquer le jeu si la connexion est lente
-            setTimeout(done, 4000);
+            // Vérifier si la vidéo est déjà chargée (cache)
+            if (victoryVideo.readyState >= 3) {
+                done();
+            } else {
+                victoryVideo.addEventListener('canplay', done, { once: true });
+                victoryVideo.addEventListener('error', done, { once: true });
+                setTimeout(done, 4000);
+            }
         });
         preloadPromises.push(videoPromise);
 
