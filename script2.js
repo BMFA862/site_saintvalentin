@@ -176,18 +176,36 @@ document.addEventListener("DOMContentLoaded", () => {
         victoryVideo.preload = "auto";
         
         const videoPromise = new Promise((resolve) => {
-            // On considère chargé si on peut commencer à lire, ou en cas d'erreur/timeout
             let resolved = false;
             const done = () => { if (!resolved) { resolved = true; resolve(); } };
 
-            // Vérifier si la vidéo est déjà chargée (cache)
-            if (victoryVideo.readyState >= 3) {
-                done();
-            } else {
-                victoryVideo.addEventListener('canplay', done, { once: true });
-                victoryVideo.addEventListener('error', done, { once: true });
-                setTimeout(done, 4000);
-            }
+            const checkProgress = () => {
+                if (resolved) return;
+                
+                // Si la durée n'est pas encore connue, on attend
+                if (!victoryVideo.duration) return;
+
+                let percent = 0;
+                if (victoryVideo.buffered.length > 0) {
+                    // Calcul du pourcentage chargé (fin du buffer / durée totale)
+                    percent = victoryVideo.buffered.end(victoryVideo.buffered.length - 1) / victoryVideo.duration;
+                }
+
+                // Si > 60% (0.6) ou si la vidéo est totalement chargée
+                if (percent >= 0.6 || victoryVideo.readyState === 4) {
+                    done();
+                }
+            };
+
+            victoryVideo.addEventListener('progress', checkProgress);
+            victoryVideo.addEventListener('loadedmetadata', checkProgress);
+            victoryVideo.addEventListener('error', done);
+            
+            // Timeout de sécurité augmenté à 15s pour laisser le temps de charger 60%
+            setTimeout(done, 15000);
+
+            // Vérification immédiate (si déjà en cache)
+            checkProgress();
         });
         preloadPromises.push(videoPromise);
 
