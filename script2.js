@@ -56,7 +56,7 @@ async function incrementerCompteur() {
 
     try {
         // 1. Lire la valeur actuelle
-        const response = await fetch(url, { headers: { 'X-Master-Key': key } });
+        const response = await fetch(url, { headers: { 'X-Access-Key': key } });
         let data = await response.json();
         
         let currentVisits = data.record.visites || 0;
@@ -67,7 +67,7 @@ async function incrementerCompteur() {
         // 3. Sauvegarder (PUT met à jour tout le JSON)
         await fetch(url, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'X-Master-Key': key },
+            headers: { 'Content-Type': 'application/json', 'X-Access-Key': key },
             body: JSON.stringify({ "visites": newVisits })
         });
         

@@ -3,9 +3,9 @@
 // ===============================
 
 // 🔴 IMPORTANT : Créez un compte sur jsonbin.io, créez un bin avec { "visites": 0 }
-// Copiez le BIN ID et la X-Master-Key (API Key) ici.
+// Copiez le BIN ID et la X-Access-Key (API Key) ici.
 const BIN_ID = "6988e136ae596e708f1b0340"; // Nécessaire pour identifier votre bin
-const API_KEY = "$2a$10$JJSUHEk54vKlEKRS0VdZ8ezABdw5yARIbMWqByRYDQD9HAwUpagqq"; // Nécessaire pour lire/modifier les données privées
+const API_KEY = "$2a$10$IOC9DDROugeavpEpMgCoteJ9Z/LI0UGMBx0.4TS8ZRMM4VkKXiOTS"; // Nécessaire pour lire/modifier les données privées
 
 const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
@@ -16,7 +16,7 @@ window.JSONBIN_API_KEY = API_KEY;
 // 2. LIRE
 async function lireCompteur() {
     try {
-        const response = await fetch(API_URL, { headers: { 'X-Master-Key': API_KEY } });
+        const response = await fetch(API_URL, { headers: { 'X-Access-Key': API_KEY } });
         if (!response.ok) throw new Error("Erreur HTTP");
         const data = await response.json();
         // JSONBin v3 retourne les données dans l'objet "record"
@@ -33,7 +33,7 @@ async function resetCompteur() {
         const newData = { "visites": 0 };
         await fetch(API_URL, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+            headers: { 'Content-Type': 'application/json', 'X-Access-Key': API_KEY },
             body: JSON.stringify(newData)
         });
         return 0;
