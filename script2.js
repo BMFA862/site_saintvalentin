@@ -42,6 +42,31 @@ function pickImage() {
 }
 
 // ===============================
+// GESTION DU COMPTEUR (JSONBLOB)
+// ===============================
+const BLOB_ID = "019c3e52-a59b-7ae1-902b-660da6f29842"; 
+const API_URL = `https://jsonblob.com/api/jsonBlob/${BLOB_ID}`;
+async function incrementerCompteur() {
+    // Utilise API_URL défini dans scriptauth.js
+    if (typeof API_URL === 'undefined') return;
+
+    try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        data.visites = (data.visites || 0) + 1;
+        
+        await fetch(API_URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        console.log("Visite comptabilisée. Total:", data.visites);
+    } catch (err) {
+        console.error("Erreur compteur:", err);
+    }
+}
+
+// ===============================
 // FONCTIONS DE GESTION DU SCORE
 // ===============================
 
@@ -122,6 +147,9 @@ function spawnRandomImage() {
 
 // Exemple : bouton avec id="spawnBtn"
 document.addEventListener("DOMContentLoaded", () => {
+    // Lancer le compteur de visites
+    incrementerCompteur();
+
     // Supporte l'image bouton avec ID monBouton
     const btn = document.getElementById("monBouton");
     if (btn) {
