@@ -4,7 +4,7 @@
 
 // Score et victoire
 let score = 0;
-const MAX_SCORE = 50;
+const MAX_SCORE = 70;
 let victoryShown = false;
 const VICTORY_IMAGE = "img/vidéo saint valentin 1.mp4"; // À remplacer par votre image de victoire
 
