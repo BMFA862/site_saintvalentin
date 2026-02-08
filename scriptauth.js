@@ -5,7 +5,7 @@
 // 🔴 IMPORTANT : Créez un compte sur jsonbin.io, créez un bin avec { "visites": 0 }
 // Copiez le BIN ID et la X-Master-Key (API Key) ici.
 const BIN_ID = "6988e136ae596e708f1b0340"; // Nécessaire pour identifier votre bin
-const API_KEY = "$2a$10$LI5N796XESwz7KCVuYaCm.COp5F81biddeU2ztyRm7nLI1SZClhbW"; // Nécessaire pour lire/modifier les données privées
+const API_KEY = "$2a$10$JJSUHEk54vKlEKRS0VdZ8ezABdw5yARIbMWqByRYDQD9HAwUpagqq"; // Nécessaire pour lire/modifier les données privées
 
 const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
