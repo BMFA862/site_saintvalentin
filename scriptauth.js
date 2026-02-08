@@ -11,8 +11,8 @@ window.API_URL = API_URL;
 // 2. LIRE
 async function lireCompteur() {
     try {
-        // cache: 'no-store' force le navigateur à récupérer la vraie valeur
-        const response = await fetch(API_URL, { cache: "no-store" });
+        // Astuce : on ajoute ?t=... pour éviter le cache sans erreur CORS
+        const response = await fetch(`${API_URL}?t=${Date.now()}`);
         const data = await response.json();
         return data.visites || 0;
     } catch (error) {

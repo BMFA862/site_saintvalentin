@@ -54,12 +54,9 @@ async function incrementerCompteur() {
     }
 
     try {
-        // 1. On récupère la valeur actuelle (sans cache)
-        const response = await fetch(url, { 
-            method: 'GET',
-            cache: "no-store"
-            // On retire les headers pour éviter une requête "OPTIONS" (preflight) qui cause souvent l'erreur CORS
-        });
+        // 1. On récupère la valeur actuelle
+        // Astuce : on ajoute ?t=... pour éviter le cache SANS déclencher de sécurité CORS stricte (Preflight)
+        const response = await fetch(`${url}?t=${Date.now()}`);
 
         // Si le fichier n'existe pas (404) ou erreur, on part de zéro
         let data = response.ok ? await response.json() : { visites: 0 };
