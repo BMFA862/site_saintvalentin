@@ -42,36 +42,23 @@ function pickImage() {
 }
 
 // ===============================
-// GESTION DU COMPTEUR (JSONBLOB)
+// GESTION DU COMPTEUR (CountAPI)
 // ===============================
 async function incrementerCompteur() {
-    // Sécurité : on récupère l'URL globale définie dans scriptauth.js
-    const url = window.API_URL;
+    // Sécurité : on récupère l'URL globale définie dans scriptauth.js (CountAPI)
+    const url = window.COUNT_API_HIT;
     
     if (!url) {
-        console.error("❌ ERREUR : API_URL n'est pas définie. Le fichier scriptauth.js est-il bien chargé ?");
+        console.error("❌ ERREUR : COUNT_API_HIT n'est pas définie. Le fichier scriptauth.js est-il bien chargé ?");
         return;
     }
 
     try {
-        // 1. On récupère la valeur actuelle
-        // Astuce : on ajoute ?t=... pour éviter le cache SANS déclencher de sécurité CORS stricte (Preflight)
-        const response = await fetch(`${url}?t=${Date.now()}`);
-
-        // Si le fichier n'existe pas (404) ou erreur, on part de zéro
-        let data = response.ok ? await response.json() : { visites: 0 };
-
-        // 2. On incrémente
-        data.visites = (data.visites || 0) + 1;
+        // CountAPI incrémente automatiquement lors de l'appel (HIT)
+        const response = await fetch(url);
+        const data = await response.json();
         
-        // 3. On sauvegarde (keepalive permet de finir la requête même si on quitte la page)
-        await fetch(url, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-            // On retire keepalive temporairement pour améliorer la compatibilité locale
-        });
-        console.log(`✅ Visite comptabilisée ! Nouveau total : ${data.visites}`);
+        console.log(`✅ Visite comptabilisée ! Nouveau total : ${data.value}`);
     } catch (err) {
         console.error("❌ Erreur réseau compteur:", err);
     }

@@ -1,22 +1,23 @@
 // ===============================
-// GESTION DU STOCKAGE (JSONBLOB)
+// GESTION DU STOCKAGE (CountAPI)
 // ===============================
 
-// 🔴 IMPORTANT : Remplacez l'ID ci-dessous par celui que vous avez créé sur jsonblob.com
-const BLOB_ID = "019c3e52-a59b-7ae1-902b-660da6f29842"; 
-const API_URL = `https://jsonblob.com/api/jsonBlob/${BLOB_ID}`;
-// Rendre l'URL accessible globalement pour script2.js
-window.API_URL = API_URL;
+// Espace de nom unique (modifiez si nécessaire)
+const NAMESPACE = "saint-valentin-bmfa862"; 
+const KEY = "visites";
+
+// URLs de l'API CountAPI
+window.COUNT_API_HIT = `https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`;
+window.COUNT_API_GET = `https://api.countapi.xyz/get/${NAMESPACE}/${KEY}`;
 
 // 2. LIRE
 async function lireCompteur() {
     try {
-        // Astuce : on ajoute ?t=... pour éviter le cache sans erreur CORS
-        const response = await fetch(`${API_URL}?t=${Date.now()}`);
+        const response = await fetch(window.COUNT_API_GET);
         const data = await response.json();
-        return data.visites || 0;
+        return data.value || 0;
     } catch (error) {
-        console.error("Erreur lecture fichier:", error);
+        console.error("Erreur lecture compteur:", error);
         return 0;
     }
 }
@@ -24,16 +25,13 @@ async function lireCompteur() {
 // 3. REMETTRE À ZÉRO
 async function resetCompteur() {
     try {
-        // On écrase le fichier avec 0
-        const newData = { "visites": 0 };
-        await fetch(API_URL, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newData)
-        });
-        return 0;
+        // Note: Le reset ne fonctionne que si la clé a été créée avec enable_reset=1
+        // On tente de définir la valeur à 0
+        const response = await fetch(`https://api.countapi.xyz/set/${NAMESPACE}/${KEY}?value=0`);
+        const data = await response.json();
+        return data.value;
     } catch (error) {
-        console.error("Erreur reset fichier:", error);
+        console.error("Erreur reset compteur:", error);
         return null;
     }
 }
