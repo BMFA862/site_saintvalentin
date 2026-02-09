@@ -51,7 +51,7 @@ function checkAuthentication() {
     const currentPage = decodeURIComponent(window.location.pathname).toLowerCase();
     
     const isIndexPage = currentPage.indexOf("index.html") !== -1 || currentPage === "/" || currentPage.endsWith("/");
-    const isProtectedPage = currentPage.endsWith("admin.html") or currentPage.endsWith("admin");
+    const isProtectedPage = currentPage.endsWith("admin.html") || currentPage.endsWith("/admin") || currentPage.endsWith("/admin/");
     
     // --- LOGIQUE PAGE ADMIN ---
     if (isProtectedPage) {
