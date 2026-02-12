@@ -13,6 +13,15 @@ const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 window.JSONBIN_API_URL = API_URL;
 window.JSONBIN_API_KEY = API_KEY;
 
+async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+}
+
 // 2. LIRE
 async function lireCompteur() {
     try {
@@ -47,6 +56,8 @@ async function resetCompteur() {
 // GESTION DE L'AUTHENTIFICATION
 // ===============================
 
+const CORRECT_PASSWORD_HASH = "82c54848684abada2a27edb35393413bb6adae9fb641f07cffd1802e22fb51a9"; 
+
 function checkAuthentication() {
     const currentPage = decodeURIComponent(window.location.pathname).toLowerCase();
     
@@ -73,6 +84,16 @@ function checkAuthentication() {
             return;
         }
         
+        hashPassword(accessData.passwordTest).then(function(result){
+            if (result === CORRECT_PASSWORD_HASH) {
+                console.log("Mot de passe correct");
+            } else {
+                console.log("Mot de passe incorect");
+                window.location.href = "mdp.html";
+                return;
+            }
+        });
+
         // Accès valide - l'utilisateur peut rester sur la page protégée
         console.log(`Accès autorisé pour l'appareil: ${accessData.deviceId}`);
         window.isAuthorized = true;

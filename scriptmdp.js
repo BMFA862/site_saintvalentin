@@ -63,7 +63,8 @@ document.getElementById('passwordForm').addEventListener('submit', async (e) => 
             deviceId: deviceId,
             accessTime: Date.now(),
             expiresAt: Date.now() + ACCESS_DURATION,
-            verified: true
+            verified: true,
+            passwordTest : password
         };
         
         // Stocker dans localStorage pour persister même après fermeture du navigateur
@@ -105,14 +106,23 @@ window.addEventListener('load', () => {
         
         // Vérifier si l'accès n'a pas expiré
         if (accessData.expiresAt > Date.now()) {
-            window.isAuthorized = true;
-            window.authorizedDeviceId = accessData.deviceId;
-            window.authorizationExpires = accessData.expiresAt;
-            document.getElementById('passwordForm').style.display = 'none';
-            console.log(`Accès autorisé pour: ${accessData.deviceId}`);
+            // Vérifier si le mot de passe est valide (pour éviter une boucle)
+            hashPassword(accessData.passwordTest).then(function(result){
+                if (result === CORRECT_PASSWORD_HASH) {
+                    window.isAuthorized = true;
+                    window.authorizedDeviceId = accessData.deviceId;
+                    window.authorizationExpires = accessData.expiresAt;
+                    document.getElementById('passwordForm').style.display = 'none';
+                    console.log(`Accès autorisé pour: ${accessData.deviceId}`);
+
+                    // Redirection automatique vers admin.html si le dispositif est reconnu
+                    window.location.href = 'admin.html';
+                } else {
+                    localStorage.removeItem('pageAccess');
+                    window.isAuthorized = false;
+        }
+            })
             
-            // Redirection automatique vers admin.html si le dispositif est reconnu
-            window.location.href = 'admin.html';
         } else {
             localStorage.removeItem('pageAccess');
             window.isAuthorized = false;
